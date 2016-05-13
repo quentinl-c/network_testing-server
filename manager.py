@@ -1,27 +1,52 @@
+from config_reader import ConfigReader
+import json
+import pika
+
+# RabbitMQ Server
+HOST = '40.117.234.24'
+PORT = 5672
+EXCHANGE = 'broker'
+
+
 class Manager(object):
     """docstring for Manager"""
     def __init__(self):
         self.collaborators = []
         self.ready = False
+        self.__connection = pika.BlockingConnection(pika.ConnectionParameters(
+            HOST, PORT))
+        self.__channel = self.__connection.channel()
+        self.__channel.exchange_declare(
+            exchange='msg', type='fanout')
 
     def readConfig(self, path):
         self.config_reader = ConfigReader(path)
-        self.config_reader.readFromFile()
-        self.remaining_nodes = self.config_reader.nodes_nbr
-
-    def getNumbersCollabs(self):
-        return len(self.collaborators)
-
-    def getRemainingCollabs(self):
-        return self.remaining_nodes
+        output = self.config_reader.readFromFile()
+        self.registered_nodes = self.config_reader.nodes_nbr
+        self.acknowledged_nodes = self.config_reader.nodes_nbr
+        return output
 
     def addNode(self, node_id):
-        if self.remaining_nodes > 0 and node_id not in self.collaborators:
+        if self.registered_nodes > 0 and node_id not in self.collaborators:
             self.collaborators.append(node_id)
-            self.remaining_nodes -= 1
+            self.registered_nodes -= 1
             return True
         else:
             return False
 
+    def acknowledgeRegistration(self, node_id):
+        if node_id in self.collaborators:
+            self.acknowledged_nodes -= 1
+            if self.acknowledged_nodes <= 0:
+                self.__sendStartSignal()
+
     def getConfig(self):
         return self.config_reader.getJSONConfig()
+
+    def __sendStartSignal(self):
+        msg = json.dumps({
+            'recipient': 'all',
+            'body': 'start'
+            })
+        self.__channel.basic_publish(exchange=EXCHANGE, routing_key='',
+                                     body=msg)

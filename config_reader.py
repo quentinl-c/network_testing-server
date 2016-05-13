@@ -1,10 +1,8 @@
 import json
-from config import Config
-
 
 # Default values
 DEFAULT_EXP_NAME = "Experience"
-DEFAULT_NODEs_NBR = 2
+DEFAULT_NODES_NBR = 2
 DEFAULT_TYPING_SPEED = 1
 DEFAULT_DURATION = 60
 DEFAULT_BROWSER_BY_NODE = 1
@@ -27,6 +25,7 @@ class ConfigReader(object):
         self.browser_by_node = DEFAULT_BROWSER_BY_NODE
 
     def readFromFile(self):
+        output = True
         self.__file = open(self.__path, "r")
         content = self.__file.read()
 
@@ -36,29 +35,26 @@ class ConfigReader(object):
             if isinstance(decod_json['exp_name'], str):
                 self.exp_name = decod_json['exp_name']
 
-            if isinstance(decod_json['nodes_nbr'], int) and
-            decod_json['nodes_nbr'] >= MIN_NODE_NBR:
+            if isinstance(decod_json['nodes_nbr'], int) and decod_json['nodes_nbr'] >= MIN_NODES_NBR:
                 self.nodes_nbr = decod_json['nodes_nbr']
 
-            if isinstance(decod_json['typing_speed'], int) and
-            decod_json['typing_speed'] >= MIN_TYPING_SPEED:
+            if isinstance(decod_json['typing_speed'], int) and decod_json['typing_speed'] >= MIN_TYPING_SPEED:
                 self.typing_speed = decod_json['typing_speed']
 
-            if isinstance(decod_json['duration'], int) and
-            decod_json['duration'] >= MIN_DURATION:
+            if isinstance(decod_json['duration'], int) and decod_json['duration'] >= MIN_DURATION:
                 self.duration = decod_json['duration']
 
-            if isinstance(decod_json['browser_by_node'], int) and
-            decod_json['browser_by_node'] >= MIN_TYPING_SPEED:
+            if isinstance(decod_json['browser_by_node'], int) and decod_json['browser_by_node'] >= MIN_TYPING_SPEED:
                 self.browser_by_node = decod_json['browser_by_node']
 
         except Exception:
-            print("JSON file isn't well formed, please check it and try again")
+            output = False
         finally:
             self.__file.close()
+            return output
 
     def getJSONConfig(self):
-        return json.dump({
+        return json.dumps({
             'exp_name': self.exp_name,
             'nodes_nbr': self.nodes_nbr,
             'typing_speed': self.typing_speed,

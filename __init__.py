@@ -4,23 +4,14 @@
 from flask import Flask, render_template
 from flask_restful import reqparse, Api, Resource
 from manager import Manager
-
+import sys
+import os
 import json
 
-# Settings
-queue_name = 'queue_a_la_con'
 
 # Manager
 
 manager = Manager()
-
-# Queue connection
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-                                     'ec2-54-157-2-56.compute-1.amazonaws.com',
-                                     5672))
-channel = connection.channel()
-
-channel.queue_declare(queue=queue_name)
 
 # Application
 app = Flask(__name__)
@@ -30,7 +21,6 @@ api = Api(app)
 parser = reqparse.RequestParser()
 
 parser.add_argument('id', type=str, help='id of current client')
-parser.add_argument('body', type=int, help='rate the task')
 
 # API resources
 
@@ -38,21 +28,34 @@ parser.add_argument('body', type=int, help='rate the task')
 class APIResgistration(Resource):
 
     def get(self):
-        return {'status': 'OK'}, 200
+        return {'status': 'Bad Method'}, 400
 
     def post(self):
         args = parser.parse_args()
-        if args.id = manager.addNode(args.id):
-            if manager.getRemainingCollabs() == 0:
-                manager.sendGoSignal()
+        if manager.addNode(args.id):
             return manager.getConfig(), 201
         else:
-            return 'exceeded quota', 403
+            return {'status': 'exceeded quota or node already registrated'}, 403
+
+
+class APIAcknowledgement(Resource):
+
+    def get(self):
+        return {'status': 'Bad Method'}, 400
+
+    def post(self):
+        args = parser.parse_args()
+        manager.acknowledgeRegistration(args.id)
+        return {'status': 'OK'}, 201
+
 
 # Routes binding
-api.add_resource(APIResgistration, '/registration')
 
-# main
+api.add_resource(APIResgistration, '/registration')
+api.add_resource(APIAcknowledgement, '/acknowledgement')
+
+# Main
+
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
@@ -61,7 +64,8 @@ if __name__ == '__main__':
     if not os.path.exists(sys.argv[1]):
         sys.exit('ERROR: config file %s was not found' % sys.argv[1])
 
-    manager.readConfig(sys.argv[1])
+    if not manager.readConfig(sys.argv[1]):
+        sys.exit('ERROR: cofig file is not well formed')
 
     print("SERVER is starting")
     app.run(debug=False)
