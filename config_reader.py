@@ -6,6 +6,7 @@ DEFAULT_NODES_NBR = 2
 DEFAULT_TYPING_SPEED = 1
 DEFAULT_DURATION = 60
 DEFAULT_BROWSER_BY_NODE = 1
+DEFAULT_TARGET = 'http://localhost:8080/doc/peer/test'
 
 # Min threasholds
 MIN_NODES_NBR = 2
@@ -23,6 +24,7 @@ class ConfigReader(object):
         self.typing_speed = DEFAULT_TYPING_SPEED
         self.duration = DEFAULT_DURATION
         self.browser_by_node = DEFAULT_BROWSER_BY_NODE
+        self.target = DEFAULT_TARGET
 
     def readFromFile(self):
         output = True
@@ -35,17 +37,24 @@ class ConfigReader(object):
             if isinstance(decod_json['exp_name'], str):
                 self.exp_name = decod_json['exp_name']
 
-            if isinstance(decod_json['nodes_nbr'], int) and decod_json['nodes_nbr'] >= MIN_NODES_NBR:
+            if(isinstance(decod_json['nodes_nbr'], int) and
+               decod_json['nodes_nbr'] >= MIN_NODES_NBR):
                 self.nodes_nbr = decod_json['nodes_nbr']
 
-            if isinstance(decod_json['typing_speed'], int) and decod_json['typing_speed'] >= MIN_TYPING_SPEED:
+            if(isinstance(decod_json['typing_speed'], int) and
+               decod_json['typing_speed'] >= MIN_TYPING_SPEED):
                 self.typing_speed = decod_json['typing_speed']
 
-            if isinstance(decod_json['duration'], int) and decod_json['duration'] >= MIN_DURATION:
+            if(isinstance(decod_json['duration'], int) and
+               decod_json['duration'] >= MIN_DURATION):
                 self.duration = decod_json['duration']
 
-            if isinstance(decod_json['browser_by_node'], int) and decod_json['browser_by_node'] >= MIN_TYPING_SPEED:
+            if(isinstance(decod_json['browser_by_node'], int) and
+               decod_json['browser_by_node'] >= MIN_TYPING_SPEED):
                 self.browser_by_node = decod_json['browser_by_node']
+
+            if isinstance(decod_json['target'], str):
+                self.exp_name = decod_json['target']
 
         except Exception:
             output = False
@@ -59,5 +68,6 @@ class ConfigReader(object):
             'nodes_nbr': self.nodes_nbr,
             'typing_speed': self.typing_speed,
             'duration': self.duration,
-            'browser_by_node': self.browser_by_node
+            'browser_by_node': self.browser_by_node,
+            'target': self.target
             })
