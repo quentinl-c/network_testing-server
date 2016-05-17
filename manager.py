@@ -3,7 +3,8 @@ import json
 import pika
 
 # RabbitMQ Server
-HOST = '40.117.234.24'
+# HOST = '40.117.234.24'
+HOST = '127.0.0.1'
 PORT = 5672
 EXCHANGE = 'broker'
 
@@ -27,6 +28,7 @@ class Manager(object):
         return output
 
     def addNode(self, node_id):
+        print("Add Node")
         if self.registered_nodes > 0 and node_id not in self.collaborators:
             self.collaborators.append(node_id)
             self.registered_nodes -= 1
@@ -35,9 +37,11 @@ class Manager(object):
             return False
 
     def acknowledgeRegistration(self, node_id):
+        print("Acknowledgement")
         if node_id in self.collaborators:
             self.acknowledged_nodes -= 1
             if self.acknowledged_nodes <= 0:
+                print("TOTO")
                 self.__sendStartSignal()
 
     def getConfig(self):

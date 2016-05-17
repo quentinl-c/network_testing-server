@@ -2,14 +2,14 @@ import json
 
 # Default values
 DEFAULT_EXP_NAME = "Experience"
-DEFAULT_NODES_NBR = 2
+DEFAULT_NODES_NBR = 1
 DEFAULT_TYPING_SPEED = 1
 DEFAULT_DURATION = 60
 DEFAULT_BROWSER_BY_NODE = 1
 DEFAULT_TARGET = 'http://localhost:8080/doc/peer/test'
 
 # Min threasholds
-MIN_NODES_NBR = 2
+MIN_NODES_NBR = 1
 MIN_TYPING_SPEED = 1
 MIN_DURATION = 15
 MIN_BROWSER_BY_NODE = 1
@@ -54,7 +54,7 @@ class ConfigReader(object):
                 self.browser_by_node = decod_json['browser_by_node']
 
             if isinstance(decod_json['target'], str):
-                self.exp_name = decod_json['target']
+                self.target = decod_json['target']
 
         except Exception:
             output = False
@@ -63,11 +63,11 @@ class ConfigReader(object):
             return output
 
     def getJSONConfig(self):
-        return json.dumps({
+        return {
             'exp_name': self.exp_name,
             'nodes_nbr': self.nodes_nbr,
             'typing_speed': self.typing_speed,
             'duration': self.duration,
             'browser_by_node': self.browser_by_node,
             'target': self.target
-            })
+            }

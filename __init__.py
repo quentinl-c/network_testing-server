@@ -32,8 +32,9 @@ class APIResgistration(Resource):
 
     def post(self):
         args = parser.parse_args()
+        print(args)
         if manager.addNode(args.id):
-            return manager.getConfig(), 201
+            return {'status': 'OK', 'body': manager.getConfig()}, 201
         else:
             return {'status': 'exceeded quota or node already registrated'}, 403
 
