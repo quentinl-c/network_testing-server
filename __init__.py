@@ -19,8 +19,11 @@ api = Api(app)
 
 # Args parsing
 parser = reqparse.RequestParser()
-
 parser.add_argument('id', type=str, help='id of current client')
+
+complex_parser = reqparse.RequestParser()
+complex_parser.add_argument('id', type=str, help='id of current client')
+complex_parser.add_argument('payload', type=str, help='results of experience')
 
 # API resources
 
@@ -47,6 +50,17 @@ class APIAcknowledgement(Resource):
     def post(self):
         args = parser.parse_args()
         manager.acknowledgeRegistration(args.id)
+        return {'status': 'OK'}, 201
+
+
+class APISaveResults(Resource):
+
+    def get(self):
+        return {'status': 'Bad Method'}, 400
+
+    def post(self):
+        args = complex_parser.parse_args()
+        manager.saveResults(args.id, args.payload)
         return {'status': 'OK'}, 201
 
 

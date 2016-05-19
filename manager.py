@@ -1,4 +1,5 @@
 from config_reader import ConfigReader
+import os
 import json
 import pika
 
@@ -18,27 +19,45 @@ class Manager(object):
             HOST, PORT))
         self.__channel = self.__connection.channel()
         self.__channel.exchange_declare(
-            exchange='msg', type='fanout')
+            exchange=EXCHANGE, type='fanout')
+        self.__ready = False
 
     def readConfig(self, path):
         self.config_reader = ConfigReader(path)
         output = self.config_reader.readFromFile()
-        self.registered_nodes = self.config_reader.nodes_nbr
-        self.acknowledged_nodes = self.config_reader.nodes_nbr
+        self.writers = self.config_reader.writers
+        self.readers = self.config_reader.readers
+        self.acknowledged_nodes = self.writers + self.readers
+        self.__ready = output
         return output
 
+    def __isAlreadyRegistered(self, node_id):
+        return len([t for t in self.collaborators if t[0] == node_id]) > 0
+
     def addNode(self, node_id):
-        if self.registered_nodes > 0 and node_id not in self.collaborators:
-            self.collaborators.append(node_id)
-            self.registered_nodes -= 1
+        if(self.__ready and (self.writers > 0 or self.readers > 0) and
+           not self.__isAlreadyRegistered(node_id)):
+            if self.writers > 0:
+                status = 'r'
+                self.writers -= 1
+            elif self.readers > 0:
+                status = 'w'
+                self.readers -= 1
+            else:
+                print("=== UNKNOWN ERROR ===")
+                return False
+
+            self.collaborators.append((node_id, status))
             print("=== New node has been added, node_id : %s ===" % node_id)
+            print("=== Remaining writers : %s ===" % self.writers)
+            print("=== Remaining readers : %s ===" % self.readers)
             return True
         else:
             print("=== Node can't be added, node_id : %s ===" % node_id)
             return False
 
     def acknowledgeRegistration(self, node_id):
-        if node_id in self.collaborators:
+        if self.__ready and self.__isAlreadyRegistered(node_id):
             self.acknowledged_nodes -= 1
             print("=== Acknowledgement has been received from node_id %s ==="
                   % node_id)
@@ -46,8 +65,22 @@ class Manager(object):
                 print("=== Experience will start NOW ===")
                 self.__sendStartSignal()
 
-    def getConfig(self):
-        return self.config_reader.getJSONConfig()
+    def getConfig(self, node_id):
+        role = [t[1] for t in self.collaborators if t[0] == node_id]
+        msg = {
+            'role': role[0],
+            'config': self.config_reader.getJSONConfig()
+        }
+        return msg
+
+    def saveResults(self, node_id, results):
+        dirname = "./Results_" + self.config_reader.exp_name + "/"
+        if not os.path(dirname):
+            os.mkdir(dirname)
+
+        file = open(dirname + str(node_id) + '_results', 'w')
+        file.write(results)
+        file.close()
 
     def __sendStartSignal(self):
         msg = json.dumps({

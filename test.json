@@ -1,8 +1,8 @@
 {
-    "exp_name" : "titi",
-    "nodes_nbr" : 1,
-    "typing_speed" : 2,
-    "duration" : 120,
-    "browser_by_node" : 1,
-    "target": "http://localhost:8080/peer/doc/test"
+    "exp_name" : "TEST - 42",
+    "writers" : 1,
+    "readers" : 1,
+    "typing_speed" : 5,
+    "duration" : 60,
+    "target": "http://localhost:8080/peer/doc/test45zafezefg"
 }
