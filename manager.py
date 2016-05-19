@@ -28,20 +28,22 @@ class Manager(object):
         return output
 
     def addNode(self, node_id):
-        print("Add Node")
         if self.registered_nodes > 0 and node_id not in self.collaborators:
             self.collaborators.append(node_id)
             self.registered_nodes -= 1
+            print("=== New node has been added, node_id : %s ===" % node_id)
             return True
         else:
+            print("=== Node can't be added, node_id : %s ===" % node_id)
             return False
 
     def acknowledgeRegistration(self, node_id):
-        print("Acknowledgement")
         if node_id in self.collaborators:
             self.acknowledged_nodes -= 1
+            print("=== Acknowledgement has been received from node_id %s ==="
+                  % node_id)
             if self.acknowledged_nodes <= 0:
-                print("TOTO")
+                print("=== Experience will start NOW ===")
                 self.__sendStartSignal()
 
     def getConfig(self):
