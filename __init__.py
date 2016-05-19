@@ -59,14 +59,17 @@ api.add_resource(APIAcknowledgement, '/acknowledgement')
 
 if __name__ == '__main__':
 
+    print("=== SERVER is starting ===")
+
     if len(sys.argv) < 2:
         sys.exit('Usage: %s config-file.json [result-file]' % sys.argv[0])
 
     if not os.path.exists(sys.argv[1]):
         sys.exit('ERROR: config file %s was not found' % sys.argv[1])
 
+    print("=== Config is being read ===")
+
     if not manager.readConfig(sys.argv[1]):
         sys.exit('ERROR: cofig file is not well formed')
 
-    print("SERVER is starting")
     app.run(debug=False)
