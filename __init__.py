@@ -87,4 +87,4 @@ if __name__ == '__main__':
     if not manager.readConfig(sys.argv[1]):
         sys.exit('ERROR: cofig file is not well formed')
 
-    app.run(debug=True)
+    app.run(host='152.81.12.192', debug=True)
