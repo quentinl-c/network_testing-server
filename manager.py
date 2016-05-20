@@ -75,7 +75,7 @@ class Manager(object):
 
     def saveResults(self, node_id, results):
         dirname = "./Results_" + self.config_reader.exp_name + "/"
-        if not os.path(dirname):
+        if not os.path.isdir(dirname):
             os.mkdir(dirname)
 
         file = open(dirname + str(node_id) + '_results', 'w')

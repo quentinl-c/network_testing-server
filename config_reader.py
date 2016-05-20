@@ -67,6 +67,5 @@ class ConfigReader(object):
             'readers': self.readers,
             'typing_speed': self.typing_speed,
             'duration': self.duration,
-            'browser_by_node': self.browser_by_node,
             'target': self.target
             }

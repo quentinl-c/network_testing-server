@@ -37,7 +37,7 @@ class APIResgistration(Resource):
         args = parser.parse_args()
         print(args)
         if manager.addNode(args.id):
-            return {'status': 'OK', 'body': manager.getConfig()}, 201
+            return {'status': 'OK', 'body': manager.getConfig(args.id)}, 201
         else:
             return {'status': 'exceeded quota or node already registrated'}, 403
 
@@ -68,6 +68,7 @@ class APISaveResults(Resource):
 
 api.add_resource(APIResgistration, '/registration')
 api.add_resource(APIAcknowledgement, '/acknowledgement')
+api.add_resource(APISaveResults, '/saveresults')
 
 # Main
 
@@ -86,4 +87,4 @@ if __name__ == '__main__':
     if not manager.readConfig(sys.argv[1]):
         sys.exit('ERROR: cofig file is not well formed')
 
-    app.run(debug=False)
+    app.run(debug=True)
