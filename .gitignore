@@ -83,7 +83,6 @@ Results_*
 *.swp
 *.bak
 *.DS_Store
-.DS_Store
 local_config.py
 static/
 example.db
