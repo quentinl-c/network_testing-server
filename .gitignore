@@ -3,23 +3,23 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
-env/
-build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
 lib/
 lib64/
 parts/
 sdist/
 var/
+/env/
+/build/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -52,6 +52,21 @@ coverage.xml
 # Django stuff:
 *.log
 
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Rope
+.ropeproject
+
+# Django stuff:
+*.log
+*.pot
+
 # Sphinx documentation
 docs/_build/
 
@@ -63,3 +78,12 @@ target/
 
 #Other
 Results_*
+
+# Project specific ignores
+*.swp
+*.bak
+*.DS_Store
+.DS_Store
+local_config.py
+static/
+example.db
