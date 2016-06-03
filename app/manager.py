@@ -5,7 +5,7 @@ import pika
 
 # RabbitMQ Server
 # HOST = '40.117.234.24'
-HOST = '152.81.12.192'
+HOST = os.getenv('RABBITMQ_ADDRESS', '127.0.0.1')
 PORT = 5672
 EXCHANGE = 'broker'
 
@@ -22,14 +22,18 @@ class Manager(object):
             exchange=EXCHANGE, type='fanout')
         self.__ready = False
 
-    def readConfig(self, path):
+    def readConfig(self, env_var, path):
         self.config_reader = ConfigReader(path)
-        output = self.config_reader.readFromFile()
+        self.__ready = False
+        if env_var:
+            self.__ready = self.config_reader.readFromEnv()
+        else:
+            self.__ready = self.config_reader.readFromFile()
+
         self.writers = self.config_reader.writers
         self.readers = self.config_reader.readers
         self.acknowledged_nodes = self.writers + self.readers
-        self.__ready = output
-        return output
+        return self.__ready
 
     def __isAlreadyRegistered(self, node_id):
         return len([t for t in self.collaborators if t[0] == node_id]) > 0

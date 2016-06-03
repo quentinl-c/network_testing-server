@@ -4,6 +4,7 @@
 from flask import Flask, render_template
 from flask_restful import reqparse, Api, Resource
 from manager import Manager
+import getopt
 import sys
 import os
 import json
@@ -76,15 +77,31 @@ if __name__ == '__main__':
 
     print("=== SERVER is starting ===")
 
-    if len(sys.argv) < 2:
-        sys.exit('Usage: %s config-file.json [result-file]' % sys.argv[0])
+    env_var = False
+    path_file = ""
 
-    if not os.path.exists(sys.argv[1]):
-        sys.exit('ERROR: config file %s was not found' % sys.argv[1])
+    if len(sys.argv) < 2:
+        sys.exit('Usage: %s -e | -f config-file.json' % sys.argv[0])
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "ef:")
+    except getopt.GetoptError:
+        sys.exit('Usage: %s -e | -f config-file.json' % sys.argv[0])
+
+    for opt, arg in opts:
+        if opt == '-e':
+            print("Environment varibles will be used")
+            env_var = True
+            break
+        elif opt == '-f':
+            path_file = arg
+            if not os.path.exists(path_file):
+                sys.exit('ERROR: config file %s was not found' % path_file)
 
     print("=== Config is being read ===")
 
-    if not manager.readConfig(sys.argv[1]):
+    if not manager.readConfig(env_var, path_file):
         sys.exit('ERROR: cofig file is not well formed')
 
-    app.run(host='152.81.12.192', debug=True)
+    ip_address = os.getenv('SERVER_ADDRESS', '127.0.0.1')
+    app.run(host=ip_address, debug=True)

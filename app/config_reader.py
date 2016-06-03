@@ -1,7 +1,7 @@
 import json
+import os
 
 # Default values
-DEFAULT_EXP_NAME = "Experience"
 DEFAULT_NODES_NBR = 1
 DEFAULT_TYPING_SPEED = 1
 DEFAULT_DURATION = 60
@@ -17,7 +17,6 @@ class ConfigReader(object):
     """docstring for ConfigReader"""
     def __init__(self, path):
         self.__path = path
-        self.exp_name = DEFAULT_EXP_NAME
         self.writers = DEFAULT_NODES_NBR
         self.readers = DEFAULT_NODES_NBR
         self.typing_speed = DEFAULT_TYPING_SPEED
@@ -31,9 +30,6 @@ class ConfigReader(object):
 
         try:
             decod_json = json.loads(content)
-
-            if isinstance(decod_json['exp_name'], str):
-                self.exp_name = decod_json['exp_name']
 
             if(isinstance(decod_json['writers'], int) and
                decod_json['writers'] >= MIN_NODES_NBR):
@@ -60,9 +56,16 @@ class ConfigReader(object):
             self.__file.close()
             return output
 
+    def readFromEnv(self):
+        self.writers = os.getenv('WRITERS', 10)
+        self.readers = os.getenv('READERS', 10)
+        self.typing_speed = os.getenv('TYPING_SPEED', 2)
+        self.duration = os.getenv('DURATION', 36000)
+        self.target = os.getenv('TARGET', "http://localhost:8080/peer/doc/a")
+        return True
+
     def getJSONConfig(self):
         return {
-            'exp_name': self.exp_name,
             'writers': self.writers,
             'readers': self.readers,
             'typing_speed': self.typing_speed,
