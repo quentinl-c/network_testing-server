@@ -1,0 +1,9 @@
+
+    {
+    "exp_name" : "titi",
+    "writers" : 10,
+    "readers": 5,
+    "typing_speed" : 2,
+    "duration" : 120,
+    "target": "http://mute-collabedition.rhcloud.com/peer/doc/randomzefzefretO"
+}

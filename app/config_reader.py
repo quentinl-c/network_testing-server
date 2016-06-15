@@ -57,8 +57,8 @@ class ConfigReader(object):
             return output
 
     def readFromEnv(self):
-        self.writers = os.getenv('WRITERS', 10)
-        self.readers = os.getenv('READERS', 10)
+        self.writers = int(os.getenv('WRITERS', 10))
+        self.readers = int(os.getenv('READERS', 10))
         self.typing_speed = os.getenv('TYPING_SPEED', 2)
         self.duration = os.getenv('DURATION', 36000)
         self.target = os.getenv('TARGET', "http://localhost:8080/peer/doc/a")
