@@ -26,8 +26,8 @@ complex_parser = reqparse.RequestParser()
 complex_parser.add_argument('id', type=str, help='id of current client')
 complex_parser.add_argument('payload', type=str, help='results of experience')
 
-# API resources
 
+# API resources
 
 class APIResgistration(Resource):
 
@@ -40,7 +40,8 @@ class APIResgistration(Resource):
         if manager.addNode(args.id):
             return {'status': 'OK', 'body': manager.getConfig(args.id)}, 201
         else:
-            return {'status': 'exceeded quota or node already registrated'}, 403
+            return {'status': 'exceeded quota or node already registrated'
+                    }, 403
 
 
 class APIAcknowledgement(Resource):
@@ -65,11 +66,22 @@ class APISaveResults(Resource):
         return {'status': 'OK'}, 201
 
 
+class APIStatus(Resource):
+
+    def get(self):
+        return {'satus': 'SERVER_IS_RUNNING',
+                'details': manager.getStatus(),
+                }, 201
+
+    def post(self):
+        return {'status': 'Bad Method'}, 400
+
 # Routes binding
 
 api.add_resource(APIResgistration, '/registration')
 api.add_resource(APIAcknowledgement, '/acknowledgement')
 api.add_resource(APISaveResults, '/saveresults')
+api.add_resource(APIStatus, '/status')
 
 # Main
 
