@@ -1,22 +1,19 @@
-FROM jessie-lxc
+FROM quentinlc/jessie-lxc:latest
 
-RUN apt-get update && apt-get install python3 
+RUN apt-get update && apt-get install python3
 
 # COPY tasks /opt/www/tasks
 # COPY config.py /opt/www/
 COPY requirements.txt /opt/www/
+COPY server /etc/init.d/
+RUN chmod 0755 /etc/init.d/server
+RUN rm /lib/init/init-d-script
+COPY init-d-script /lib/init/
 
-WORKDIR /opt/www/
-
-
-RUN apt-get install -y python3-pip && pip3 install -r requirements.txt && \
-    # invoke app.dependencies.install && \
+RUN apt-get install -y python3-pip && pip3 install -r /opt/www/requirements.txt && \
     rm -rf ~/.cache/pip
 
-WORKDIR /
-
 COPY app/ /opt/www/
-COPY entrypoint.sh /opt/www/
 
 RUN chown -R nobody /opt/www/
 
@@ -29,5 +26,4 @@ ENV TYPING_SPEED 5
 ENV DURATION 3600
 
 
-USER nobody
-# CMD [ "sh", "/opt/www/entrypoint.sh"]
+CMD [ "sh", "/opt/www/entrypoint.sh"]

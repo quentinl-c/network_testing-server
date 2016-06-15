@@ -86,3 +86,4 @@ Results_*
 local_config.py
 static/
 example.db
+*.tar*
