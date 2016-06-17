@@ -87,3 +87,5 @@ local_config.py
 static/
 example.db
 *.tar*
+*.log
+*.err

@@ -1,5 +1,6 @@
 FROM quentinlc/jessie-lxc:latest
 
+MAINTAINER Quent Laporte-Chabasse
 RUN apt-get update && apt-get install python3
 
 # COPY tasks /opt/www/tasks

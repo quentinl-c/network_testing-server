@@ -9,9 +9,13 @@ import sys
 import os
 import json
 
+# Log File
+log_file = open("server.log", 'w')
+err_file = open("server.err", 'w')
+sys.stdout = log_file
+sys.stderr = err_file
 
 # Manager
-
 manager = Manager()
 
 # Application
@@ -75,6 +79,7 @@ class APIStatus(Resource):
 
     def post(self):
         return {'status': 'Bad Method'}, 400
+
 
 # Routes binding
 
