@@ -127,7 +127,7 @@ class Manager(object):
             self.__clients_saved.append(node_id)
 
             if len(self.__clients_saved) >= self.collaborators_nbr:
-                self.exp_ended = True
+                self.__exp_ended = True
 
     def getStatus(self):
         return {
