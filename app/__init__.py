@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
-
-# All imports
 from flask import Flask, render_template
 from flask_restful import reqparse, Api, Resource
 from manager import Manager
+import logging
 import getopt
 import sys
 import os
 import json
 
-# Log File
-log_file = open("server.log", 'w')
-err_file = open("server.err", 'w')
-sys.stdout = log_file
-sys.stderr = err_file
 
 # Manager
 manager = Manager()
@@ -30,6 +24,9 @@ complex_parser = reqparse.RequestParser()
 complex_parser.add_argument('id', type=str, help='id of current client')
 complex_parser.add_argument('payload', type=str, help='results of experience')
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 # API resources
 
@@ -40,7 +37,6 @@ class APIResgistration(Resource):
 
     def post(self):
         args = parser.parse_args()
-        print(args)
         if manager.addNode(args.id):
             return {'status': 'OK', 'body': manager.getConfig(args.id)}, 201
         else:
@@ -92,7 +88,7 @@ api.add_resource(APIStatus, '/status')
 
 if __name__ == '__main__':
 
-    print("=== SERVER is starting ===")
+    logger.debug("=== SERVER is starting ===")
 
     env_var = False
     path_file = ""
@@ -107,18 +103,20 @@ if __name__ == '__main__':
 
     for opt, arg in opts:
         if opt == '-e':
-            print("Environment varibles will be used")
+            logger.debug("=== Environment varibles will be used ===")
             env_var = True
             break
         elif opt == '-f':
+            logger.debug("=== Configuration file will be used ===")
             path_file = arg
             if not os.path.exists(path_file):
                 sys.exit('ERROR: config file %s was not found' % path_file)
 
-    print("=== Config is being read ===")
+    logger.debug("=== Config is being read ===")
 
     if not manager.readConfig(env_var, path_file):
         sys.exit('ERROR: cofig file is not well formed')
 
     ip_address = os.getenv('SERVER_ADDRESS', '127.0.0.1')
+    logger.debug('SERVER_ADDRESS %s' % ip_address)
     app.run(host=ip_address, debug=True)

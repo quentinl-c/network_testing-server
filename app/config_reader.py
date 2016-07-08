@@ -13,12 +13,6 @@ MIN_NODES_NBR = 1
 MIN_TYPING_SPEED = 1
 MIN_DURATION = 15
 
-# Log File
-log_file = open("server.log", 'w')
-err_file = open("server.err", 'w')
-sys.stdout = log_file
-sys.stderr = err_file
-
 
 class ConfigReader(object):
     """docstring for ConfigReader"""
