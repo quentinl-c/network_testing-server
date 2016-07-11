@@ -1,23 +1,28 @@
 FROM quentinlc/jessie-lxc:latest
 
 MAINTAINER Quent Laporte-Chabasse
-RUN apt-get update && apt-get install python3
 
-# COPY tasks /opt/www/tasks
-# COPY config.py /opt/www/
-COPY requirements.txt /opt/www/
-COPY server /etc/init.d/
+COPY scripts/requirements.txt /opt/www/
+
+COPY scripts/server /etc/init.d/
 RUN chmod 0755 /etc/init.d/server
+
 RUN rm /lib/init/init-d-script
-COPY init-d-script /lib/init/
+COPY scripts/init-d-script /lib/init/
 
-RUN apt-get install -y python3-pip && pip3 install -r /opt/www/requirements.txt && \
-    rm -rf ~/.cache/pip
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+  python3 \
+  python3-pip \
+  ntp && \
+  pip3 install -r /opt/www/requirements.txt && \
+  rm -rf ~/.cache/pip
 
+# Copy the entire application
 COPY app/ /opt/www/
-
 RUN chown -R nobody /opt/www/
 
+# Set default values
 ENV SERVER_ADDRESS '127.0.0.1'
 ENV RABBITMQ_ADDRESS '127.0.0.1'
 ENV TARGET 'http://127.0.0.1:8080/peer/doc/random'

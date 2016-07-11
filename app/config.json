@@ -1,8 +1,8 @@
-    {
+  {
     "exp_name" : "titi",
-    "writers" : 2,
-    "readers": 1,
+    "writers" : 5,
+    "readers": 4,
     "typing_speed" : 2,
-    "duration" : 30,
-    "target": "http://mute-collabedition.rhcloud.com/peer/doc/test-test-test-test"
+    "duration" : 120,
+    "target": "http://mute-collabedition.rhcloud.com/peer/doc/room420"
 }
