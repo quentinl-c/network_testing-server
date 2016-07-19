@@ -16,7 +16,7 @@ EXCHANGE = 'broker'
 
 HOME_DIR = os.getenv('HOME_DIR', '/home/')
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename=__name__ + '.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -24,11 +24,6 @@ class Manager(object):
     """docstring for Manager"""
     def __init__(self):
         self.collaborators = []
-        self.__connection = pika.BlockingConnection(pika.ConnectionParameters(
-            HOST, PORT))
-        self.__channel = self.__connection.channel()
-        self.__channel.exchange_declare(
-            exchange=EXCHANGE, type='fanout')
         self.__ready = False
         self.__exp_sarted = False
         self.__exp_ended = False
@@ -72,7 +67,8 @@ class Manager(object):
                 return False
 
             self.collaborators.append((node_id, status))
-            logger.debug("=== New node has been added, node_id : %s ===" % node_id)
+            logger.debug("=== New node has been added, node_id : %s ===" %
+                         node_id)
             logger.debug("=== Remaining writers : %s ===" % self.writers)
             logger.debug("=== Remaining readers : %s ===" % self.readers)
             return True
@@ -83,8 +79,8 @@ class Manager(object):
     def acknowledgeRegistration(self, node_id):
         if self.__ready and self.__isAlreadyRegistered(node_id):
             self.acknowledged_nodes -= 1
-            logger.debug("=== Acknowledgement has been received from node_id %s ==="
-                  % node_id)
+            logger.debug("=== Acknowledgement has been received from node_id  \
+                         %s ===" % node_id)
             if self.acknowledged_nodes <= 0:
                 logger.debug("=== Experience will start NOW ===")
                 self.__exp_sarted = True
@@ -137,6 +133,11 @@ class Manager(object):
             }
 
     def __sendStartSignal(self):
+        self.__connection = pika.BlockingConnection(pika.ConnectionParameters(
+            HOST, PORT))
+        self.__channel = self.__connection.channel()
+        self.__channel.exchange_declare(
+            exchange=EXCHANGE, type='fanout')
         msg = json.dumps({
             'recipient': 'all',
             'body': 'start'
