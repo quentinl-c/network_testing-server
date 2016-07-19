@@ -24,7 +24,7 @@ complex_parser = reqparse.RequestParser()
 complex_parser.add_argument('id', type=str, help='id of current client')
 complex_parser.add_argument('payload', type=str, help='results of experience')
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename=__name__ + '.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
