@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import Flask, render_template
 from flask_restful import reqparse, Api, Resource
-from manager import Manager
+from controller import Controller
 import logging
 import getopt
 import sys
@@ -10,7 +10,7 @@ import json
 
 
 # Manager
-manager = Manager()
+controller = Controller()
 
 # Application
 app = Flask(__name__)
@@ -37,11 +37,7 @@ class APIResgistration(Resource):
 
     def post(self):
         args = parser.parse_args()
-        if manager.addNode(args.id):
-            return {'status': 'OK', 'body': manager.getConfig(args.id)}, 201
-        else:
-            return {'status': 'exceeded quota or node already registrated'
-                    }, 403
+        return {'status': 'OK', 'body': controller.addNode(args.id)}, 201
 
 
 class APIAcknowledgement(Resource):
@@ -51,7 +47,7 @@ class APIAcknowledgement(Resource):
 
     def post(self):
         args = parser.parse_args()
-        manager.acknowledgeRegistration(args.id)
+        controller.acknowledgeRegistration(args.id)
         return {'status': 'OK'}, 201
 
 
@@ -62,15 +58,27 @@ class APISaveResults(Resource):
 
     def post(self):
         args = complex_parser.parse_args()
-        manager.saveResults(args.id, args.payload)
+        controller.saveResults(args.id, args.payload)
         return {'status': 'OK'}, 201
+
+
+class APIForceExp(Resource):
+
+    def get(self):
+        controller.startExp()
+        return {'satus': 'SERVER_IS_RUNNING',
+                'details': 'Start signal will be send'
+                }, 201
+
+    def post(self):
+        return {'status': 'Bad Method'}, 400
 
 
 class APIStatus(Resource):
 
     def get(self):
         return {'satus': 'SERVER_IS_RUNNING',
-                'details': manager.getStatus(),
+                'details': controller.getStatus(),
                 }, 201
 
     def post(self):
@@ -82,6 +90,7 @@ class APIStatus(Resource):
 api.add_resource(APIResgistration, '/registration')
 api.add_resource(APIAcknowledgement, '/acknowledgement')
 api.add_resource(APISaveResults, '/saveresults')
+api.add_resource(APIForceExp, '/forceexp')
 api.add_resource(APIStatus, '/status')
 
 # Main
@@ -114,7 +123,7 @@ if __name__ == '__main__':
 
     logger.debug("=== Config is being read ===")
 
-    if not manager.readConfig(env_var, path_file):
+    if not controller.readConfig(env_var, path_file):
         sys.exit('ERROR: cofig file is not well formed')
 
     ip_address = os.getenv('SERVER_ADDRESS', '127.0.0.1')
