@@ -115,13 +115,10 @@ class ClientsManager(object):
                                           registrated')
 
     def acknowledgeRegistration(self, node_id):
-        print("YOLO")
-        print(self.__initial_collabs)
         if self.__controller.ready and self.__isAlreadyRegistered(node_id):
             logger.debug("=== Acknowledgement has been received from node_id  \
                          %s ===" % node_id)
             if self.__initial_collabs <= 0:
-                print("TOTO")
                 self.__controller.startExp()
 
     def getReadyCollabsNmbr(self):

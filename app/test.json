@@ -1,8 +1,0 @@
-{
-    "exp_name" : "TEST-42",
-    "writers" : 1,
-    "readers" : 1,
-    "typing_speed" : 5,
-    "duration" : 30,
-    "target": "http://localhost:8080/peer/doc/random"
-}

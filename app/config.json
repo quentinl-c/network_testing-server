@@ -1,8 +1,0 @@
-  {
-    "exp_name" : "titi",
-    "writers" : 3,
-    "readers": 1,
-    "typing_speed" : 2,
-    "duration" : 20,
-    "target": "http://mute-collabedition.rhcloud.com/peer/doc/ezezeergt"
-}
