@@ -1,3 +1,5 @@
+# coding=utf-8
+"""A setuptools-based script for installing Pulp Smash."""
 import logging
 import string
 import random

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-from flask import Flask, render_template
+from flask import Flask
 from flask_restful import reqparse, Api, Resource
 from controller import Controller
 import logging
 import getopt
 import sys
 import os
-import json
 
 
 # Manager
